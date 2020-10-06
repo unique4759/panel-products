@@ -8,6 +8,9 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
+import Products from './components/products/Products';
+import Categories from './components/categories/Categories';
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -27,6 +30,20 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-const app = new Vue({
-    el: '#app',
-});
+if (document.getElementById('products')) {
+    new Vue({
+        el: '#products',
+        components: {
+            Products
+        },
+    });
+}
+
+if (document.getElementById('categories')) {
+    new Vue({
+        el: '#categories',
+        components: {
+            Categories
+        },
+    });
+}
