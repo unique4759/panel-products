@@ -54,7 +54,7 @@
                 axios.post('/categories/get-data').then(res => {
                     this.count = res.data.count;
                     this.data = res.data.data;
-                    this.emptyMessage = this.data.length === 0;
+                    this.empty = this.data.length === 0;
                 }).catch(err => console.log(err));
             },
             showBtn() {

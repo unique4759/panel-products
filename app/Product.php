@@ -14,13 +14,13 @@ class Product extends Model {
     }
 
     /**
-     * Selection of published articles.
+     * Selection of publish.
      *
      * @param $query
      *
      * @return mixed
      */
     public function scopeActive($query) {
-        return $query->wherePublished(TRUE);
+        return $query->wherePublish(TRUE);
     }
 }

@@ -112,6 +112,6 @@ class CategoryController extends Controller {
             return response()->json('success!');
         }
 
-        return response()->json(['errors' => ['has_products' => ['Невозможно удалить катгорию, она привязана к товару!']]], 400);
+        return response()->json(['errors' => ['has_products' => ['Невозможно удалить категорию, она привязана к товару!']]], 400);
     }
 }

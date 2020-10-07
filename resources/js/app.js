@@ -11,6 +11,17 @@ window.Vue = require('vue');
 import Products from './components/products/Products';
 import Categories from './components/categories/Categories';
 
+// element-ui
+import {
+    Cascader,
+    Select,
+    Option,
+    Switch,
+} from 'element-ui';
+
+import lang from 'element-ui/lib/locale/lang/ru-RU';
+import locale from 'element-ui/lib/locale';
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -23,6 +34,13 @@ import Categories from './components/categories/Categories';
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+
+// element-ui
+locale.use(lang);
+Vue.component(Cascader.name, Cascader);
+Vue.component(Select.name, Select);
+Vue.component(Option.name, Option);
+Vue.component(Switch.name, Switch);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
