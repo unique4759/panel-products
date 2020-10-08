@@ -42,9 +42,45 @@ class ProductController extends Controller {
      * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function getData(Request $request) {
+        $data = $this->validate($request, [
+            'name' => 'nullable|string',
+            'deleted' => 'nullable',
+            'publish' => 'nullable',
+            'unpublish' => 'nullable',
+            'category' => 'nullable|integer',
+            'price_from' => 'nullable|integer',
+            'price_to' => 'nullable|integer',
+        ]);
+
         $result = new Product;
+
+        if ($data['name']) {
+            $result = $result->where('name', 'LIKE', '%' . $data['name'] . '%');
+        }
+        if ($data['deleted']) {
+            $result = $result->whereDeleted(!$data['deleted']);
+        }
+        if ($data['publish']) {
+            $result = $result->wherePublish($data['publish']);
+        }
+        if ($data['unpublish']) {
+            $result = $result->wherePublish(!$data['unpublish']);
+        }
+        if ($data['category']) {
+            $category = $data['category'];
+            $result = $result->whereHas('categories', function ($q) use ($category) {
+                $q->where('id', $category);
+            });
+        }
+        if ($data['price_from']) {
+            $result = $result->where('price', '>=', $data['price_from']);
+        }
+        if ($data['price_to']) {
+            $result = $result->where('price', '<=', $data['price_to']);
+        }
 
         $data = $result->with('categories')
             ->get();
@@ -69,6 +105,8 @@ class ProductController extends Controller {
             [
                 'name' => 'required|string',
                 'price' => 'required|integer',
+                'publish' => 'required',
+                'image' => 'required',
             ],
             [
                 'name.required' => 'Поле Название обязательно для заполенния!',
@@ -105,6 +143,8 @@ class ProductController extends Controller {
                 'id' => 'nullable|integer',
                 'name' => 'required|string',
                 'price' => 'required|integer',
+                'publish' => 'required',
+                'image' => 'required',
             ],
             [
                 'name.required' => 'Поле Название обязательно для заполенния!',
@@ -144,9 +184,9 @@ class ProductController extends Controller {
         ]);
 
         $product = Product::find($data['id']);
-        $product->categories()->detach();
-        $product->delete();
+        $product->deleted = 1;
+        $product->save();
 
-        return response()->json('success!');
+        return response()->json($product);
     }
 }

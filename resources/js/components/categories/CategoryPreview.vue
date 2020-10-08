@@ -64,7 +64,15 @@
             deleteCategory(id) {
                 axios.post('/category/delete', {id: id}).then(res => {
                     this.$emit('delete');
-                }).catch((err) => console.log(err));
+                }).catch((err) => {
+                    console.log(err);
+                    swal.fire({
+                        icon: 'warning',
+                        title: 'Категория используется в товаре!',
+                        showCancelButton: false,
+                        confirmButtonText: 'Закрыть',
+                    });
+                });
             },
         },
         mounted() {

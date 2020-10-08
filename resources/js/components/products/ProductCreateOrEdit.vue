@@ -1,5 +1,16 @@
 <template>
     <form :class="type === 'preview' ? 'p-3 mt-3 border-top bg-light' : ''">
+        <div class="d-flex flex-column align-items-center col mb-3">
+            <img v-if="!form.image" src="../../../images/non.png" alt="Превью товара"
+                 class="mb-3 align-self-center rounded-circle">
+            <img v-else :src="form.image" alt="Превью товара" class="mb-3 align-self-center rounded-circle image">
+            <label for="image" class="d-none">Изображение</label>
+            <input type="file"
+                   id="image"
+                   name="image"
+                   @change="onFileChange"
+                   accept="image/*">
+        </div>
         <div class="row mb-3">
             <div class="col">
                 <label for="product-name" class="d-none">Название</label>
@@ -44,13 +55,15 @@
                 <label class="m-0 pl-1 pt-1">Публикация</label><br>
             </div>
         </div>
-        <div class="row no-gutters">
-            <button class="btn btn-success btn-sm mr-1" @click="save">
+        <div class="row no-gutters align-items-center">
+            <button class="btn btn-success btn-sm mr-1" @click="save" :disabled="form.categories.length === 1 || form.categories.length > 10">
                 Сохранить
             </button>
-            <button class="btn btn-sm btn-outline-dark" @click="cancel">
+            <button class="btn btn-sm btn-outline-dark mr-3" @click="cancel">
                 Отмена
             </button>
+            <span class="text-danger" v-if="form.categories.length === 1">Кол-во выбранных категорий должно составлять от 2 до 10</span>
+            <span class="text-danger" v-if="form.categories.length > 10">Кол-во выбранных категорий не должно превышать 10</span>
         </div>
     </form>
 </template>
@@ -119,8 +132,21 @@
                 this.form.id = data['id'];
                 this.form.name = data['name'];
                 this.form.price = +data['price'];
+                this.form.image = data['image'];
                 this.form.publish = !!data['publish'];
                 this.form.categories = data['categories'] ? this.getCategoriesIds(data['categories']) : [];
+            },
+            onFileChange(e) {
+                let image = e.target.files[0];
+                this.read(image);
+            },
+            read(img) {
+                let reader = new FileReader();
+
+                reader.readAsDataURL(img);
+                reader.onload = e => {
+                    this.form.image = e.target.result;
+                };
             },
         },
         mounted() {
@@ -134,5 +160,10 @@
 <style>
     .category-select .el-input__inner {
         height: 37px !important;
+    }
+
+    .image {
+        width: 90px;
+        height: 90px;
     }
 </style>

@@ -17,6 +17,68 @@
                 @update="getData">
             </product-create-or-edit>
         </div>
+        <div class="d-flex align-items-center mt-4">
+            <div class="col p-0">
+                <input type="text"
+                       name="name"
+                       v-model="filters.name"
+                       placeholder="Название товара"
+                       class="form-control">
+            </div>
+            <div class="col category-select">
+                <el-select v-model="filters.category"
+                           clearable
+                           placeholder="Категория">
+                    <el-option
+                        v-for="(item,index) in categories"
+                        :key="index"
+                        :label="item.value"
+                        :value="item.key">
+                    </el-option>
+                </el-select>
+            </div>
+            <div class="col pl-0">
+                <input type="number"
+                       name="price_from"
+                       v-model="filters.price_from"
+                       placeholder="Цена от"
+                       class="form-control">
+            </div>
+            <div class="col p-0">
+                <input type="text"
+                       name="price_to"
+                       v-model="filters.price_to"
+                       placeholder="Цена до"
+                       class="form-control">
+            </div>
+            <div class="col-auto d-flex align-items-center p-0 ml-3">
+                <el-switch
+                    v-model="filters.deleted"
+                    :active-value="1"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949">
+                </el-switch>
+                <label class="m-0 pl-1 pt-1">Не удаленные</label>
+            </div>
+            <div class="col-auto d-flex align-items-center p-0 ml-3">
+                <el-switch
+                    v-model="filters.publish"
+                    :active-value="1"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949">
+                </el-switch>
+                <label class="m-0 pl-1 pt-1">Опубликованные</label>
+            </div>
+            <div class="col-auto d-flex align-items-center p-0 ml-3">
+                <el-switch
+                    v-model="filters.unpublish"
+                    :active-value="1"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949">
+                </el-switch>
+                <label class="m-0 pl-1 pt-1">Не опубликованные</label>
+            </div>
+        </div>
         <div v-if="!empty" class="mb-4">
             <product-preview
                 v-for="item in data"
@@ -35,6 +97,7 @@
 <script>
     import ProductPreview from './ProductPreview';
     import ProductCreateOrEdit from './ProductCreateOrEdit';
+    import _ from 'lodash';
 
     export default {
         name: "products",
@@ -54,11 +117,30 @@
                 create: false,
                 empty: false,
                 current: '',
+                filters: {
+                    name: '',
+                    deleted: false,
+                    publish: false,
+                    unpublish: false,
+                    category: '',
+                    price_from: '',
+                    price_to: '',
+                },
             }
+        },
+        watch: {
+            filters: {
+                handler: _.debounce(
+                    function () {
+                        this.getData();
+                    }, 500
+                ),
+                deep: true
+            },
         },
         methods: {
             getData() {
-                axios.post('/products/get-data').then(res => {
+                axios.post('/products/get-data', this.filters).then(res => {
                     this.count = res.data.count;
                     this.data = res.data.data;
                     this.empty = this.data.length === 0;
@@ -81,3 +163,9 @@
         },
     }
 </script>
+
+<style>
+    .category-select .el-input__inner {
+        height: 37px !important;
+    }
+</style>

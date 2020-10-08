@@ -7,6 +7,7 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+window.swal = require('sweetalert2');
 
 import Products from './components/products/Products';
 import Categories from './components/categories/Categories';

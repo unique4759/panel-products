@@ -1,10 +1,13 @@
 <template>
     <div class="mt-4 bg-white p-3 border" v-if="Object.keys(item).length !== 0">
         <div class="row align-items-center no-gutters position-relative">
-            <div class="col">
-                <p class="mb-0">{{ item.name }}</p>
+            <div class="col d-flex align-items-center">
+                <img v-if="!item.image" src="../../../images/non.png" alt="Превью товара"
+                     class="rounded-circle image">
+                <img v-else :src="item.image" alt="Превью товара" class="rounded-circle image">
+                <p class="mb-0 ml-2">{{ item.name }} <span v-if="item.deleted" class="text-danger ml-3">удален</span></p>
             </div>
-            <div class="col-3 text-right">
+            <div v-if="!item.deleted" class="col-3 text-right">
                 <button v-if="!showEdit"
                         class="btn btn-outline-success btn-sm"
                         title="Редактировать"
@@ -15,7 +18,7 @@
                         title="Не редактировать"
                         @click="cancel()">Не редактировать
                 </button>
-                <button class="btn btn-sm btn-outline-danger" title="Удалить"
+                <button v-if="!item.deleted" class="btn btn-sm btn-outline-danger" title="Удалить"
                         @click="deleteCategory(item.id)">Удалить
                 </button>
             </div>
@@ -76,4 +79,11 @@
         },
     }
 </script>
+
+<style>
+    .image {
+        width: 40px;
+        height: 40px;
+    }
+</style>
 
